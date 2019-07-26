@@ -1,20 +1,30 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.consumer import AsyncConsumer
+
 import json
+import asyncio
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self, event):
-        print('connected', event)
-        self.accept()
+class ChatConsumer(AsyncConsumer):
+    async def websocket_connect(self, event):
+        await self.send({
+            "type": "websocket.accept",
+        })
 
-    async def disconnect(self, close_code, event):
-        print('disconnected', event, close_code)
+        await self.send({
+            "type": "websocket.send",
+            "text": "Someone logged in"
+        })
 
-    async def receive(self, text_data, event):
-        print('recieved', event)
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+    async def websocket_disconnect(self, event):
+        print('disconnected', event)
 
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+    async def websocket_receive(self, event):
+        text_data = event.get('text', None)
+        if text_data is not None:
+            text_data_loaded = json.loads(text_data)
+            message = text_data_loaded.get('message')
+            
+            await self.send({
+                "type": "websocket.send",
+                "message": message
+            })
