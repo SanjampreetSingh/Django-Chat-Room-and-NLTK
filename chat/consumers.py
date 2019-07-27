@@ -6,22 +6,39 @@ import asyncio
 
 from .models import Room
 
+
 class ChatConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
-        await self.send({
-            "type": "websocket.accept",
-        })
         try:
             room_name = self.scope['url_route']['kwargs']['room_name']
             room_obj = await self.get_room(room_name)
-            print(room_obj)
+            chat_room = room_obj.name
+            self.chat_room = chat_room
+            await self.channel_layer.group_add(
+                chat_room,
+                self.channel_name
+            )
+
+            await self.send({
+                "type": "websocket.accept",
+            })
+
         except Room.DoesNotExist:
             return HttpResponseNotFound('<h1>Room not found</h1>')
 
     async def websocket_receive(self, event):
+        await self.channel_layer.group_send(
+            self.chat_room,
+            {
+                "type": "chat_message",
+                "text": json.loads(event["text"]).get('message')
+            }
+        )
+
+    async def chat_message(self, event):
         await self.send({
             "type": "websocket.send",
-            "text": json.loads(event["text"]).get('message'),
+            "text": event['text']
         })
 
     async def websocket_disconnect(self, event):
@@ -29,4 +46,4 @@ class ChatConsumer(AsyncConsumer):
 
     @database_sync_to_async
     def get_room(self, name):
-        return Room.objects.get(name=name).name
+        return Room.objects.get_or_create(name=name)[0]
