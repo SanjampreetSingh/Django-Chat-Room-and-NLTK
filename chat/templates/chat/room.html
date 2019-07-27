@@ -29,7 +29,7 @@
 
 
 {% block script %}
-
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js'></script>
     <script>
 
         var fromData = $("#form")
@@ -43,7 +43,7 @@
         }
         var endpoint = ws_scheme  + loc.host + loc.pathname
         
-        var socket = new WebSocket(endpoint);
+        var socket = new ReconnectingWebSocket(endpoint);
 
 
         socket.onmessage = function(e) {
