@@ -2,78 +2,85 @@
 
 {% block content %}
 
-<ul id='chat_log'>
-    {% for chat in object.chatmessage_set.all %}
-        <li>{{ chat.message }}</li>
-    {% endfor %}
-</ul>
+    <ul id='chat_log'>
+        {% for chat in object.chatmessage_set.all %}
+            <li>{{ chat.message }}</li>
+        {% endfor %}
+    </ul>
 
-<form id='form' method="POST"> {% csrf_token %}
-    <div class="form-group">
-        <label for="message">Message</label>
-        <input class="form-control" id="chat_input" type="text" placeholder="Enter message here" />
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Send</button>
-    </div>
-</form>
+    <form id='form' method="POST"> {% csrf_token %}
+        <div class="form-group">
+            <label for="message">Message</label>
+            <input class="form-control" id="chat_input" type="text" placeholder="Enter message here" />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+    </form>
 
-<div class="alert alert-warning collapse" id="alert" role="alert">
-    Someone joined the chat!
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</>
-    </button>
-</div>
+    <div class="alert alert-warning collapse" id="alert" role="alert">
+        Someone joined the chat!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</>
+        </button>
+    </div>
 
 {% endblock %} 
 
 
 {% block script %}
 
-<script>
-    var loc = window.location
-    var ws_scheme  = 'ws://'
-    if (loc.protocol == 'https:'){
-        ws_scheme  = 'wss://'
-    }
+    <script>
 
-    var fromData = $("#form")
-    var chatInput = $("#chat_input")
-    var chatLog = $("#chat_log")
-    var endpoint = ws_scheme  + loc.host + "/chat" + loc.pathname
-    var socket = new WebSocket(endpoint);
+        var fromData = $("#form")
+        var chatInput = $("#chat_input")
+        var chatLog = $("#chat_log")
 
-    socket.onmessage = function(e) {
-        console.log('Messaged', e);
-        chatLog.append("<li>" + e.data + "</li>")
-    }
+        var loc = window.location
+        var ws_scheme  = 'ws://'
+        if (loc.protocol == 'https:'){
+            ws_scheme  = 'wss://'
+        }
+        var endpoint = ws_scheme  + loc.host + loc.pathname
+        
+        var socket = new WebSocket(endpoint);
+
+
+        socket.onmessage = function(e) {
+            console.log(e);
+            chatLog.append("<li>" + e.data + "</li>")
+        }
+            
+
+        socket.onopen =  function(e) {
+            console.log(e);
+            
+            $('#alert').fadeIn();
+            setTimeout(function() { 
+                $('#alert').fadeOut(500); 
+            }, 1500);
+            
+            fromData.submit(function(event){
+                event.preventDefault()
+                var chatText = chatInput.val()
+                var data = {
+                    'message': chatText
+                }
+                socket.send(JSON.stringify(data))
+                fromData[0].reset()
+            })
+        }
         
 
-    socket.onopen =  function(e) {
-        console.log('Opened', e);
-        $('#alert').fadeIn();
-        setTimeout(function() { 
-            $('#alert').fadeOut(500); 
-        }, 1500);
-        fromData.submit(function(event){
-            event.preventDefault()
-            var chatText = chatInput.val()
-            var data = {
-                'message': chatText
-            }
-            socket.send(JSON.stringify(data))
-            fromData[0].reset()
-        })
-    }
-    
-    socket.onerror =  function(e) {
-        console.log('error', e);
-    }
+        socket.onerror =  function(e) {
+            console.log('error', e);
+        }
 
-    socket.onclose = function(e) {
-        console.log('Closed', e);
-    }
 
-</script>
+        socket.onclose = function(e) {
+            console.log('Closed', e);
+        }
+
+    </script>
 
 {% endblock %}

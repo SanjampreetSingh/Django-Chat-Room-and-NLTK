@@ -12,7 +12,12 @@
 <div class='container'>
     <div class='row border-bottom my-3 py-3'>
         <div class='col'>
-            <h1 class='p-0 m-0'>Chat Room</h1>
+            <h1 class='p-0 m-0'>
+                {% if room.label == None %}
+                    Chat Room
+                {% endif %}
+                {{ room.label }}
+            </h1>
         </div>
     </div>
 {% block content %}

@@ -69,8 +69,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chatroom.wsgi.application'
 ASGI_APPLICATION = 'chatroom.routing.application'
+WSGI_APPLICATION = 'chatroom.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
