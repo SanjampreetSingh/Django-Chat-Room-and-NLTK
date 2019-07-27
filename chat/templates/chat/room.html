@@ -54,14 +54,11 @@
 
 
         socket.onmessage = function(e) {
-            console.log(e);
             chatLog.append("<li>" + e.data + "</li>")
         }
             
 
         socket.onopen =  function(e) {
-            console.log(e);
-            
             $('#alert').fadeIn();
             setTimeout(function() { 
                 $('#alert').fadeOut(500); 
@@ -79,8 +76,8 @@
                     headers: {'X-CSRFToken': '{{ csrf_token }}'},
                     dataType : "json",
                     data:data,
-                    success: function(data){
-                    alert(data);         
+                    success: function(resp){
+                        console.log(resp)         
                     }
                 });
                 socket.send(JSON.stringify(data))
