@@ -6,6 +6,10 @@ from haikunator import Haikunator
 import json
 import random
 import string
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+
 
 from .models import Room, Message
 
@@ -32,3 +36,10 @@ def room(request, room_name):
         'room': room,
         'messages': messages,
     })
+
+
+def nltk(request):
+    message = str(request.POST.get('message'))
+    tokenize = word_tokenize(message)
+    pos = pos_tag(tokenize)
+    return pos

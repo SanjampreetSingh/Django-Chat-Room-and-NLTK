@@ -73,6 +73,16 @@
                 var data = {
                     'message': chatText
                 }
+                $.ajax({
+                    type: "POST",
+                    url: "/nltk/",
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    dataType : "json",
+                    data:data,
+                    success: function(data){
+                    alert(data);         
+                    }
+                });
                 socket.send(JSON.stringify(data))
                 fromData[0].reset()
             })
