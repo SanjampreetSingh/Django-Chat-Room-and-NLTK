@@ -3,8 +3,8 @@
 {% block content %}
 
     <ul id='chat_log'>
-        {% for chat in object.chatmessage_set.all %}
-            <li>{{ chat.message }}</li>
+        {% for message in messages %}
+            <li>{{ message.message }}</li>
         {% endfor %}
     </ul>
 

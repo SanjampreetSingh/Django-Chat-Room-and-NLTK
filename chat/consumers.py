@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 import json
 import asyncio
 
-from .models import Room
+from .models import Room, Message
 
 
 class ChatConsumer(AsyncConsumer):
@@ -12,7 +12,9 @@ class ChatConsumer(AsyncConsumer):
         try:
             room_name = self.scope['url_route']['kwargs']['room_name']
             room_obj = await self.get_room(room_name)
-            chat_room = room_obj.name
+            self.room_obj = room_obj
+
+            chat_room = room_name
             self.chat_room = chat_room
             await self.channel_layer.group_add(
                 chat_room,
@@ -27,11 +29,13 @@ class ChatConsumer(AsyncConsumer):
             return HttpResponseNotFound('<h1>Room not found</h1>')
 
     async def websocket_receive(self, event):
+        message = json.loads(event["text"]).get('message')
+        await self.save_chat_message(message)
         await self.channel_layer.group_send(
             self.chat_room,
             {
                 "type": "chat_message",
-                "text": json.loads(event["text"]).get('message')
+                "text": message
             }
         )
 
@@ -47,3 +51,8 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def get_room(self, name):
         return Room.objects.get_or_create(name=name)[0]
+
+    @database_sync_to_async
+    def save_chat_message(self, message):
+        room_obj = self.room_obj
+        return Message.objects.create(room=room_obj,message=message)
