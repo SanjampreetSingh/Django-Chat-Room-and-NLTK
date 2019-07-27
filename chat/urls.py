@@ -4,5 +4,5 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('new/', views.new_room, name='new_room'),
-    re_path(r'^(?P<room_name>[^/]+)/$', views.room, name='room'),
+    re_path(r'^(?P<room_name>[\w-]{,50})/$', views.room, name='room'),
 ]
