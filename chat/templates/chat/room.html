@@ -70,6 +70,7 @@
                 var data = {
                     'message': chatText
                 }
+
                 $.ajax({
                     type: "POST",
                     url: "/nltk/",
@@ -77,9 +78,10 @@
                     dataType : "json",
                     data:data,
                     success: function(resp){
-                        console.log(resp)         
+                        console.log(resp.data[])         
                     }
                 });
+
                 socket.send(JSON.stringify(data))
                 fromData[0].reset()
             })

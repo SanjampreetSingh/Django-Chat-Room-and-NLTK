@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 from django.db import transaction
 
@@ -43,4 +43,7 @@ def nltk(request):
     message = str(request.POST.get('message'))
     tokenize = word_tokenize(message)
     pos = pos_tag(tokenize)
-    return HttpResponse(pos)
+    data = {
+        'data': pos
+    }
+    return JsonResponse(data, status=201)
