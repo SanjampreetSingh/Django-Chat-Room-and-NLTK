@@ -17,7 +17,7 @@
             <button type="submit" class="btn btn-primary">Send</button>
         </div>
     </form>
-
+    <div class="alert alert-primary" role="alert" id="nltk"></div>
     <div class="alert alert-success collapse" id="alert" role="alert">
         Connected!
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -64,13 +64,15 @@
                 $('#alert').fadeOut(500); 
             }, 1500);
             
+            $('#nltk').hide()
+
             fromData.submit(function(event){
                 event.preventDefault()
                 var chatText = chatInput.val()
                 var data = {
                     'message': chatText
                 }
-
+                $('#nltk').show()
                 $.ajax({
                     type: "POST",
                     url: "/nltk/",
@@ -78,7 +80,8 @@
                     dataType : "json",
                     data:data,
                     success: function(resp){
-                        console.log(resp.data)         
+                        nltkData = JSON.stringify(resp.data);
+                        $('#nltk').html(nltkData);
                     }
                 });
 
