@@ -18,8 +18,8 @@
         </div>
     </form>
 
-    <div class="alert alert-warning collapse" id="alert" role="alert">
-        Someone joined the chat!
+    <div class="alert alert-success collapse" id="alert" role="alert">
+        Connected!
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</>
         </button>
@@ -78,7 +78,7 @@
                     dataType : "json",
                     data:data,
                     success: function(resp){
-                        console.log(resp.data[])         
+                        console.log(resp.data)         
                     }
                 });
 

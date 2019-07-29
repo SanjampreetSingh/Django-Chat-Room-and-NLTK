@@ -76,14 +76,14 @@ WSGI_APPLICATION = 'chatroom.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'chatroom',
-            'USER': 'root',
-            'PASSWORD': '',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'chatroom',
+        'USER': 'postgres',
+        'PASSWORD': '12346789',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
 
