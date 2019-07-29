@@ -18,8 +18,8 @@
         </div>
     </form>
     <div class="alert alert-primary" role="alert" id="nltk"></div>
-    <div class="alert alert-success collapse" id="alert" role="alert">
-        Connected!
+    <div class="alert alert-warning" role="alert" id="joined">
+    Someone Joined!
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</>
         </button>
@@ -54,16 +54,20 @@
 
 
         socket.onmessage = function(e) {
-            chatLog.append("<li>" + e.data + "</li>")
+            if(e.data === "Someone Joined!"){
+                 $('#joined').fadeIn();
+            setTimeout(function() { 
+                $('#joined').fadeOut(500); 
+            }, 1500);
+            
+            }
+            else{
+                chatLog.append("<li>" + e.data + "</li>")
+            }
         }
             
 
         socket.onopen =  function(e) {
-            $('#alert').fadeIn();
-            setTimeout(function() { 
-                $('#alert').fadeOut(500); 
-            }, 1500);
-            
             $('#nltk').hide()
 
             fromData.submit(function(event){

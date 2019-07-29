@@ -25,8 +25,26 @@ class ChatConsumer(AsyncConsumer):
                 "type": "websocket.accept",
             })
 
+            await self.join_message()
+
         except Room.DoesNotExist:
             return HttpResponseNotFound('<h1>Room not found</h1>')
+
+    async def join_message(self):
+       await self.channel_layer.group_send(
+           self.chat_room,
+           {
+               "type": "join_messages",
+               "text":  'Someone Joined'
+           }
+       )
+
+    async def join_messages(self,event):
+        await self.send({
+            "type": "websocket.send",
+            "text": "Someone Joined!"
+        })
+
 
     async def websocket_receive(self, event):
         message = json.loads(event["text"]).get('message')
@@ -40,6 +58,7 @@ class ChatConsumer(AsyncConsumer):
         )
 
     async def chat_message(self, event):
+
         await self.send({
             "type": "websocket.send",
             "text": event['text']
@@ -55,4 +74,4 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def save_chat_message(self, message):
         room_obj = self.room_obj
-        return Message.objects.create(room=room_obj,message=message)
+        return Message.objects.create(room=room_obj, message=message)
