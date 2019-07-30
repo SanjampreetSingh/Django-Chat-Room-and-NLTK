@@ -31,20 +31,19 @@ class ChatConsumer(AsyncConsumer):
             return HttpResponseNotFound('<h1>Room not found</h1>')
 
     async def join_message(self):
-       await self.channel_layer.group_send(
-           self.chat_room,
-           {
-               "type": "join_messages",
-               "text":  'Someone Joined'
-           }
-       )
+        await self.channel_layer.group_send(
+            self.chat_room,
+            {
+                "type": "join_messages",
+                "text":  'HAs87pUKJ'
+            }
+        )
 
-    async def join_messages(self,event):
+    async def join_messages(self, event):
         await self.send({
             "type": "websocket.send",
-            "text": "Someone Joined!"
+            "text": "HAs87pUKJ"
         })
-
 
     async def websocket_receive(self, event):
         message = json.loads(event["text"]).get('message')
@@ -58,7 +57,6 @@ class ChatConsumer(AsyncConsumer):
         )
 
     async def chat_message(self, event):
-
         await self.send({
             "type": "websocket.send",
             "text": event['text']
