@@ -12,4 +12,4 @@ You can visit [my deployment of the example online](https://django-chat-room.her
 
 ## Running locally
 
-- To run this app locally, you'll need Python, Postgres, NLTK and Redis.
+- To run this app locally, you'll need Python, Postgres and Redis.
